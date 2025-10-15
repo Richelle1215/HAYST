@@ -65,13 +65,11 @@ class CategoryController extends Controller
     }
 
     // 7. DESTROY: Burahin/I-delete ang Category
-    public function destroy(Category $category)
-    {
-        // NOTE: Dahil sa onDelete('cascade') sa products migration, 
-        // mabubura ang lahat ng produkto na kabilang sa kategoryang ito.
-        $category->delete(); 
+        public function destroy(Category $category)
+        {
+            $category->delete();
 
-        return redirect()->route('categories.index')
-                         ->with('success', 'Category deleted successfully.');
-    }
+            return response()->json(['success' => true]);
+        }
+
 }

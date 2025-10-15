@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Product;
-use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
+use App\Models\Category;
+
 
 class ProductController extends Controller
 {
@@ -72,33 +72,46 @@ class ProductController extends Controller
     }
 
     // 6. UPDATE: I-update ang Product
-    public function update(Request $request, Product $product)
-    {
-        $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|max:255',
-            'description' => 'required',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
-        ]);
+public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
 
-        $data = $request->except('image');
-        
-        if ($request->hasFile('image')) {
-            // Burahin ang lumang image kung meron
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
-            }
-            // I-upload ang bagong image
-            $data['image'] = $request->file('image')->store('products', 'public');
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'price' => 'required|numeric|min:0',
+        'stock' => 'required|integer|min:0',
+        'category_id' => 'required|exists:categories,id',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    // ✅ Update text fields
+    $product->name = $request->name;
+    $product->description = $request->description;
+    $product->price = $request->price;
+    $product->stock = $request->stock;
+    $product->category_id = $request->category_id;
+
+    // ✅ Handle image upload
+    if ($request->hasFile('image')) {
+        // Delete old image if exists
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            Storage::disk('public')->delete($product->image);
         }
 
-        $product->update($data);
+        // Store new image inside storage/app/public/products
+        $path = $request->file('image')->store('products', 'public');
 
-        return redirect()->route('products.index')
-                         ->with('success', 'Product updated successfully.');
+        // Save path to DB
+        $product->image = $path;
     }
+
+    $product->save();
+
+    return redirect()
+        ->route('seller.products.index')
+        ->with('success', 'Product updated successfully!');
+}
 
     // 7. DESTROY: Burahin/I-delete ang Product
     public function destroy(Product $product)
@@ -108,7 +121,7 @@ class ProductController extends Controller
         }
 
         $product->delete();
-        return redirect()->route('products.index')
+        return redirect()->route('seller.products.index')
                          ->with('success', 'Product deleted successfully.');
     }
 }

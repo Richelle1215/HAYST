@@ -31,7 +31,7 @@
         .main-content {
             margin-left: 260px; /* must match sidebar width */
             padding: 2rem;
-            background-color: #f9fafb; /* Tailwind gray-50 */
+            background-color: #ffffffff; /* Tailwind gray-50 */
             min-height: 100vh;
             width: calc(100% - 260px);
         }
@@ -40,7 +40,7 @@
         .sidebar a {
             display: block;
             padding: 0.75rem 1.5rem;
-            color: #d1d5db; /* gray-300 */
+            color: #cbced1ff; /* gray-300 */
             text-decoration: none;
             transition: background 0.2s, color 0.2s;
             font-weight: 500;

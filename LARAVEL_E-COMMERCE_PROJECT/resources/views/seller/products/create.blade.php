@@ -1,71 +1,59 @@
 @extends('seller.layout')
 
 @section('content')
-<div class="bg-white shadow rounded-lg p-6 max-w-6xl mx-auto">
+<div class="bg-white shadow-lg rounded-xl max-w-6xl mx-auto p-10 flex items-start justify-center">
+ 
 
-    <h1 class="text-xl font-semibold mb-4 text-gray-800">Products</h1>
+    <main class="flex-1 p-8 overflow-y-auto">
+        <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">➕ Add New Product</h1>
 
-    {{-- ✅ Add Product Button --}}
-    <a href="{{ route('seller.products.create') }}" 
-       class="bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium px-4 py-2 rounded mb-4 inline-block shadow">
-       ➕ Add Product
-    </a>
+            <form action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
 
-    <div class="overflow-x-auto mt-4">
-        {{-- ✅ Full grid, blue header, centered content --}}
-        <table class="w-full text-sm border border-gray-400 rounded-lg table-fixed border-collapse text-center">
-            <thead class="bg-blue-700 text-white uppercase text-xs">
-                <tr>
-                    <th class="px-4 py-2 border border-gray-400 w-20">Image</th>
-                    <th class="px-4 py-2 border border-gray-400">Name</th>
-                    <th class="px-4 py-2 border border-gray-400">Price</th>
-                    <th class="px-4 py-2 border border-gray-400 w-32">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($products as $product)
-                <tr class="hover:bg-gray-50">
-                    {{-- ✅ Product image (exact 40x40) --}}
-                    <td class="px-4 py-2 border border-gray-400">
-                        @if($product->image)
-                            <img src="{{ asset('storage/' . $product->image) }}" 
-                                 alt="{{ $product->name }}" 
-                                 class="object-cover rounded-md mx-auto" 
-                                 width="40" height="40">
-                        @else
-                            <div class="h-10 w-10 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs mx-auto">
-                                No Img
-                            </div>
-                        @endif
-                    </td>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Product Name</label>
+                    <input type="text" name="name" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required>
+                </div>
 
-                    <td class="px-4 py-2 border border-gray-400 align-middle">{{ $product->name }}</td>
-                    <td class="px-4 py-2 border border-gray-400 align-middle">₱{{ number_format($product->price, 2) }}</td>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Description</label>
+                    <textarea name="description" rows="4" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required></textarea>
+                </div>
 
-                    <td class="px-4 py-2 border border-gray-400 align-middle">
-                        <a href="{{ route('seller.products.edit', $product) }}" 
-                           class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
-                        <span class="text-gray-400">|</span>
-                        <form action="{{ route('seller.products.destroy', $product) }}" 
-                              method="POST" class="inline">
-                            @csrf 
-                            @method('DELETE')
-                            <button type="submit" 
-                                    class="text-red-600 hover:text-red-800 font-medium">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="py-4 text-gray-500 border border-gray-400">
-                        No products found.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Price</label>
+                        <input type="number" name="price" step="0.01" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2">Stock</label>
+                        <input type="number" name="stock" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Category</label>
+                    <select name="category_id" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required>
+                        <option value="">-- Select Category --</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">Product Image</label>
+                    <input type="file" name="image" class="w-full border-gray-300 rounded-lg shadow-sm">
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <a href="{{ route('seller.products.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </main>
 </div>
 @endsection

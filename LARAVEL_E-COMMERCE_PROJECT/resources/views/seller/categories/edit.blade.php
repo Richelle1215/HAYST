@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="bg-white shadow rounded-lg p-8">
-    @include('seller.sidebar')
+
 
     <main class="flex-1 p-8 overflow-y-auto"> {{-- CRITICAL: Ito ang nagpapa-scroll sa content lang --}}
         <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8">
@@ -24,7 +24,7 @@
 
                 <div class="flex justify-end space-x-4">
                     <a href="{{ route('seller.categories.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Update Category</button>
+                    <button type="submit" class="bg-blue-600 text-black px-4 py-2 rounded hover:bg-blue-700">Update Category</button>
                 </div>
             </form>
         </div>
