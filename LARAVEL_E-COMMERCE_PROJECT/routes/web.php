@@ -6,7 +6,8 @@
         use App\Http\Controllers\StoreController;
         use Illuminate\Http\Request;
         use Illuminate\Support\Facades\Auth;
-
+        use App\Http\Controllers\Seller\OrderController;
+        use App\Http\Controllers\Seller\SellerProfileController;
         /*
         |--------------------------------------------------------------------------
         | Public Routes
@@ -31,18 +32,22 @@ Route::get('/home', function () {
         | Seller Routes
         |--------------------------------------------------------------------------
         */
-        Route::middleware([
-            'auth:sanctum',
-            config('jetstream.auth_session'),
-            'verified',
-        ])->prefix('seller')->name('seller.')->group(function () {
-            Route::get('/dashboard', function () {
-                return view('seller.dashboard'); // resources/views/seller/dashboard.blade.php
-            })->name('dashboard');
+    Route::middleware(['auth', 'verified'])->prefix('seller')->name('seller.')->group(function () {
 
-            Route::resource('categories', CategoryController::class);
-            Route::resource('products', ProductController::class);
-        });
+        Route::get('/dashboard', function () {
+            return view('seller.dashboard');
+        })->name('dashboard');
+
+        // ✅ Product Routes
+    Route::resource('products', \App\Http\Controllers\ProductController::class);
+    Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/update', [SellerProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update-password', [SellerProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index'); // ✅ Add this line
+    Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+    
+    });
+
 
         /*
         |--------------------------------------------------------------------------

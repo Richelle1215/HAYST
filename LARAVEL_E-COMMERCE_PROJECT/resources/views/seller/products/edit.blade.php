@@ -1,72 +1,77 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Product: ') . $product->name }}
-        </h2>
-    </x-slot>
+@extends('seller.layout')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                
-                <form method="POST" action="{{ route('products.update', $product) }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT') 
+@section('content')
+<div class="bg-white shadow rounded-lg p-6 max-w-4xl mx-auto">
 
-                    <div class="col-span-6 sm:col-span-4 mb-4">
-                        <x-label for="name" value="{{ __('Product Name') }}" />
-                        <x-input id="name" type="text" name="name" class="mt-1 block w-full" value="{{ old('name', $product->name) }}" required />
-                        <x-input-error for="name" class="mt-2" />
-                    </div>
+    <h1 class="text-xl font-semibold text-gray-800 mb-4">✏️ Edit Product</h1>
 
-                    <div class="col-span-6 sm:col-span-4 mb-4">
-                        <x-label for="category_id" value="{{ __('Category') }}" />
-                        <select id="category_id" name="category_id" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id) == $category->id)>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <x-input-error for="category_id" class="mt-2" />
-                    </div>
+    <form action="{{ route('seller.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
 
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <x-label for="price" value="{{ __('Price (P)') }}" />
-                            <x-input id="price" type="number" step="0.01" name="price" class="mt-1 block w-full" value="{{ old('price', $product->price) }}" required />
-                            <x-input-error for="price" class="mt-2" />
-                        </div>
-                        <div>
-                            <x-label for="stock" value="{{ __('Stock') }}" />
-                            <x-input id="stock" type="number" name="stock" class="mt-1 block w-full" value="{{ old('stock', $product->stock) }}" required />
-                            <x-input-error for="stock" class="mt-2" />
-                        </div>
-                    </div>
+        <div class="mb-3">
+            <label class="block text-gray-700 mb-1 text-sm">Product Name</label>
+            <input type="text" name="name" value="{{ $product->name }}" 
+                   class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring focus:ring-gray-200" required>
+        </div>
 
-                    <div class="col-span-6 sm:col-span-4 mb-4">
-                        <x-label for="description" value="{{ __('Description') }}" />
-                        <textarea id="description" name="description" rows="4" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full" required>{{ old('description', $product->description) }}</textarea>
-                        <x-input-error for="description" class="mt-2" />
-                    </div>
+        <div class="mb-3">
+            <label class="block text-gray-700 mb-1 text-sm">Description</label>
+            <textarea name="description" rows="4" 
+                      class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring focus:ring-gray-200" required>{{ $product->description }}</textarea>
+        </div>
 
-                    <div class="col-span-6 sm:col-span-4 mb-6">
-                        <x-label for="image" value="{{ __('Current Image') }}" />
-                        @if($product->image)
-                            <img src="{{ asset('storage/' . $product->image) }}" class="w-24 h-24 object-cover mb-2 rounded" alt="Current Product Image">
-                        @else
-                            <p class="mb-2 text-sm text-gray-500">No Image Uploaded</p>
-                        @endif
-                        <x-label for="image" value="{{ __('Upload New Image (Optional)') }}" />
-                        <x-input id="image" type="file" name="image" class="mt-1 block w-full p-2 border" />
-                        <x-input-error for="image" class="mt-2" />
-                    </div>
+        <div class="grid grid-cols-2 gap-4 mb-3">
+            <div>
+                <label class="block text-gray-700 mb-1 text-sm">Price</label>
+                <input type="number" name="price" step="0.01" value="{{ $product->price }}" 
+                       class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring focus:ring-gray-200" required>
+            </div>
 
-                    <x-button class="mt-4">
-                        {{ __('Update Product') }}
-                    </x-button>
-                </form>
+            <div>
+                <label class="block text-gray-700 mb-1 text-sm">Stock</label>
+                <input type="number" name="stock" value="{{ $product->stock }}" 
+                       class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring focus:ring-gray-200" required>
             </div>
         </div>
-    </div>
-</x-app-layout>
+
+        <div class="mb-3">
+            <label class="block text-gray-700 mb-1 text-sm">Category</label>
+            <select name="category_id" 
+                    class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring focus:ring-gray-200" required>
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}" {{ $category->id == $product->category_id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 mb-1 text-sm">Current Image</label>
+            @if($product->image)
+                <img src="{{ asset('storage/' . $product->image) }}" 
+                     alt="{{ $product->name }}" class="h-24 rounded mb-3 border">
+            @else
+                <p class="text-gray-500 italic text-sm">No image uploaded.</p>
+            @endif
+
+            <label class="block text-gray-700 mb-1 text-sm">Change Image</label>
+            <input type="file" name="image" 
+                   class="w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring focus:ring-gray-200">
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-4">
+            <a href="{{ route('seller.products.index') }}" 
+               class="bg-gray-500 text-white text-sm px-4 py-2 rounded hover:bg-gray-600">
+               Cancel
+            </a>
+            <button type="submit" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded">
+                Update Product
+            </button>
+        </div>
+    </form>
+
+</div>
+@endsection

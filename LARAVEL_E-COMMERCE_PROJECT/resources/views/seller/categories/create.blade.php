@@ -1,33 +1,32 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ __('Create New Category') }}</h2>
-    </x-slot>
+@extends('seller.layout')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                
-                <form method="POST" action="{{ route('categories.store') }}">
-                    @csrf
+@section('content')
+<div class="bg-white shadow rounded-lg p-8">
+    @include('seller.sidebar')
 
-                    <div class="col-span-6 sm:col-span-4 mb-4">
-                        <x-label for="name" value="{{ __('Category Name') }}" />
-                        <x-input id="name" type="text" name="name" class="mt-1 block w-full" value="{{ old('name') }}" required />
-                        <x-input-error for="name" class="mt-2" />
-                    </div>
+    <main class="flex-1 p-8 overflow-y-auto"> {{-- CRITICAL: Ito ang nagpapa-scroll sa content lang --}}
+        <div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">➕ Add New Category</h1>
 
-                    <div class="col-span-6 sm:col-span-4 mb-4">
-                        <x-label for="description" value="{{ __('Description (Optional)') }}" />
-                        <textarea id="description" name="description" rows="3" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full">{{ old('description') }}</textarea>
-                        <x-input-error for="description" class="mt-2" />
-                    </div>
+            <form action="{{ route('seller.categories.store') }}" method="POST">
+                @csrf
 
-                    <x-button class="mt-4">
-                        {{ __('Save Category') }}
-                    </x-button>
-                </form>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Category Name</label>
+                    <input type="text" name="name" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required> {{-- FIXED: Added p-2 for design --}}
+                </div>
 
-            </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">Description</label>
+                    <textarea name="description" rows="4" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required></textarea> {{-- FIXED: Added p-2 for design --}}
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <a href="{{ route('seller.categories.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save Category</button>
+                </div>
+            </form>
         </div>
-    </div>
-</x-app-layout>
+    </main>
+</div>
+@endsection
