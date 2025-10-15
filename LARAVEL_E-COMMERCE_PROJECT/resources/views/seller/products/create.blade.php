@@ -13,7 +13,7 @@
 
                 <div class="mb-4">
                     <label class="block text-gray-700 mb-2">Product Name</label>
-                    <input type="text" name="name" class="w-full border-gray-300 rounded-lg shadow-sm p-2" required>
+                    <input type="text" name="name" class="w-90 border-gray-300 rounded-lg shadow-sm p-2" required>
                 </div>
 
                 <div class="mb-4">

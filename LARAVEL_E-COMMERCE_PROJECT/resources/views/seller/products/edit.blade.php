@@ -37,7 +37,7 @@
                 <div>
                     <label class="block text-sm text-gray-600 mb-2">Product Name</label>
                     <input type="text" name="name" value="{{ $product->name }}"
-                           class="w-full border border-gray-200 rounded-md px-4 py-3 text-base focus:ring-1 focus:ring-blue-300" required>
+                           class="w-90 border border-gray-200 rounded-md px-4 py-3 text-base focus:ring-1 focus:ring-blue-300" required>
                 </div>
 
                 <div>

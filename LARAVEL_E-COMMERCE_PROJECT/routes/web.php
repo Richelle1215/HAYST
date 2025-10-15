@@ -94,3 +94,6 @@ Route::get('/home', function () {
 
         //store routes
         Route::get('/', [StoreController::class, 'index'])->name('products.index');
+
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+
