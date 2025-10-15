@@ -11,13 +11,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            // Add the 'role' column, defaulting to 'customer'
-            $table->string('role')->default('customer')->after('email');
-        });
-    }
+            public function up()
+            {
+                Schema::table('users', function (Blueprint $table) {
+                    $table->string('role')->default('customer');
+                });
+            }
+
+
 
     /**
      * Reverse the migrations.

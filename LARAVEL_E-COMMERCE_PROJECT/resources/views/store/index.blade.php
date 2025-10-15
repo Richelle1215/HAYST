@@ -6,6 +6,17 @@
     <title>LUMIÈRE</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+<script>
+    // Disable back navigation completely
+    if (window.history && window.history.pushState) {
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, null, window.location.href);
+        };
+    }
+</script>
+
+
 
     <style>
         /* Define colors based on the Elle Fashion image (muted rose/brown for accent) */

@@ -55,33 +55,49 @@
                 <div class="h-6 w-px bg-gray-300"></div>
 
                 {{-- Auth Links (Login/Register/Admin) --}}
-                @if (Route::has('login'))
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">Admin Panel</a>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" 
-                                class="text-sm font-semibold text-white px-3 py-1 rounded transition bg-red-600 hover:bg-red-700 ml-2"
-                            >
-                                LOGOUT
-                            </button>
-                        </form>
-                    @else
-                        {{-- Login link --}}
-                        <a href="{{ route('login') }}" 
-                           class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">
-                           LOGIN
-                        </a>
+                    @if (Route::has('login'))
+                        @auth
+                            @php
+                                $role = Auth::user()->role ?? 'customer';
+                            @endphp
 
-                        @if (Route::has('register'))
-                            {{-- Register link --}}
-                            <a href="{{ route('register') }}"
-                                class="text-sm font-semibold text-white px-3 py-1 rounded transition bg-[#8C5B56] hover:bg-[#7A4E49] ml-2">
-                                REGISTER
+                            @if ($role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">
+                                    Admin Dashboard
+                                </a>
+                            @elseif ($role === 'seller')
+                                <a href="{{ route('seller.dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">
+                                    Seller Dashboard
+                                </a>
+                            @else
+                                <a href="{{ route('home') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">
+                                    My Dashboard
+                                </a>
+                            @endif
+
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit"
+                                    class="text-sm font-semibold text-white px-3 py-1 rounded transition bg-red-600 hover:bg-red-700 ml-2">
+                                    LOGOUT
+                                </button>
+                            </form>
+                        @else
+                            {{-- Login link --}}
+                            <a href="{{ route('login') }}"
+                                class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">
+                                LOGIN
                             </a>
-                        @endif
-                    @endauth     
-                @endif
+
+                            @if (Route::has('register'))
+                                {{-- Register link --}}
+                                <a href="{{ route('register') }}"
+                                    class="text-sm font-semibold text-white px-3 py-1 rounded transition bg-[#8C5B56] hover:bg-[#7A4E49] ml-2">
+                                    REGISTER
+                                </a>
+                            @endif
+                        @endauth
+                    @endif
             </div>
             
         </div>

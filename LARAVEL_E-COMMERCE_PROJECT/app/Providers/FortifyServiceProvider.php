@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Providers;
-
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use App\Actions\Fortify\LoginResponse;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
@@ -60,9 +61,8 @@ class FortifyServiceProvider extends ServiceProvider
         //
         //     return redirect('/')->with('status', 'Registration successful! Please log in.');
         // });
-              $this->app->singleton(
-            RegisterResponseContract::class,
-            RegisterResponse::class
-        );
+             $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
+
+        
     }
 }
