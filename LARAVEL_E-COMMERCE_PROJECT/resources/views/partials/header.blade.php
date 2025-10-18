@@ -70,7 +70,7 @@
                                     Seller Dashboard
                                 </a>
                             @else
-                                <a href="{{ route('home') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">
+                                <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition ml-2">
                                     My Dashboard
                                 </a>
                             @endif

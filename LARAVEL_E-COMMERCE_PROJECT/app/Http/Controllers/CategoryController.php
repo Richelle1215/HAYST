@@ -23,18 +23,25 @@ class CategoryController extends Controller
     }
 
     // 3. STORE: I-save ang bagong Category
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:categories|max:255',
-            'description' => 'nullable',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|unique:categories|max:255',
+        'description' => 'nullable',
+    ]);
 
-        Category::create($request->all());
+    Category::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'seller_id' => auth()->id(),
+    ]);
 
-        return redirect()->route('seller.categories.index')
-                         ->with('success', 'Category created successfully.');
-    }
+    return redirect()->route('seller.categories.index')
+                     ->with('success', 'Category added successfully!');
+}
+
+
+
 
     // 4. SHOW: Ipakita ang detalye (Hindi karaniwan sa Categories, pwedeng i-redirect na lang)
     public function show(Category $category)

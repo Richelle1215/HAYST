@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('categories', function (Blueprint $table) {
-        $table->id();
-        $table->string('name')->unique();
-        $table->text('description')->nullable();
-        $table->timestamps();
-    });
+Schema::create('categories', function (Blueprint $table) {
+    $table->id();
+    $table->string('name')->unique();
+    $table->text('description')->nullable();
+    $table->unsignedBigInteger('seller_id'); // ✅ Added
+    $table->foreign('seller_id')->references('id')->on('users')->onDelete('cascade'); // ✅ Added
+    $table->timestamps();
+});
+
     }
 
     /**

@@ -8,17 +8,23 @@
     <div class="w-1/4 flex flex-col items-center">
         <h2 class="text-sm font-semibold text-gray-700 mb-3">Current Image</h2>
 
-        @if($product->image)
-            <img src="{{ asset('storage/' . $product->image) }}" 
-                 alt="{{ $product->name }}" 
-                 style="width: 200px; height: 200px; object-fit: cover;"
-                 class="rounded-lg shadow-md mb-4">
-        @else
-            <div style="width: 200px; height: 200px;"
-                 class="flex items-center justify-center bg-gray-100 text-gray-500 rounded-lg mb-4">
-                No Image
-            </div>
-        @endif
+            @if($product->image)
+                <?php
+                    // Use filemtime if available to add a cache-busting query param
+                    $imagePath = 'storage/' . $product->image;
+                    $fullStoragePath = storage_path('app/public/' . $product->image);
+                    $v = file_exists($fullStoragePath) ? filemtime($fullStoragePath) : time();
+                ?>
+                <img src="{{ asset($imagePath) }}?v={{ $v }}" 
+                    alt="{{ $product->name }}" 
+                    style="width: 200px; height: 200px; object-fit: cover;"
+                    class="rounded-lg shadow-md mb-4">
+            @else
+                <div class="w-48 h-48 bg-gray-200 rounded-lg mb-4 flex items-center justify-center text-gray-500">
+                    No image
+                </div>
+            @endif
+
 
         <label class="text-sm text-gray-600 mb-1">Change Image</label>
         <input type="file" name="image"
@@ -29,9 +35,11 @@
     <div class="w-3/4 pl-12">
         <h1 class="text-2xl font-semibold text-gray-800 mb-8 text-center">✏️ Edit Product</h1>
 
-        <form action="{{ route('seller.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('seller.products.update', $product->id) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
+
+
 
             <div class="space-y-5 w-full pr-6">
                 <div>
