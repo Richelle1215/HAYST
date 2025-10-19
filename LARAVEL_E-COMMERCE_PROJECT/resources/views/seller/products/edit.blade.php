@@ -1,7 +1,7 @@
 @extends('seller.layout')
 
 @section('content')
-<div class="bg-white shadow-lg rounded-xl max-w-6xl mx-auto p-10">
+
     <h1 class="text-2xl font-semibold text-gray-800 mb-8 text-center">✏️ Edit Product</h1>
 
     <form method="POST" action="{{ route('seller.products.update', $product->id) }}" enctype="multipart/form-data">
@@ -90,5 +90,5 @@
             </div>
         </div>
     </form>
-</div>
+
 @endsection

@@ -11,16 +11,13 @@ use App\Models\Seller;
 
 class ProductController extends Controller
 {
-    /**
-     * 1. INDEX: Display a listing of products
-     */
+    // 1. INDEX: Show list of products
     public function index()
     {
         $seller = Seller::where('user_id', Auth::id())->first();
 
         if (!$seller) {
-            return redirect()->route('seller.dashboard')
-                ->with('error', 'You must have a seller profile to view products.');
+            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to view products.');
         }
 
         $products = Product::where('seller_id', $seller->id)
@@ -31,38 +28,27 @@ class ProductController extends Controller
         return view('seller.products.index', compact('products'));
     }
 
-    /**
-     * 2. CREATE: Show the form for creating a new product
-     */
+    // 2. CREATE: Show form to create new product
     public function create()
     {
         $seller = Seller::where('user_id', Auth::id())->first();
         
         if (!$seller) {
-            return redirect()->route('seller.dashboard')
-                ->with('error', 'You must have a seller profile to create products.');
+            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to create products.');
         }
         
         $categories = Category::where('seller_id', $seller->id)->get(); 
         
-        if ($categories->isEmpty()) {
-            return redirect()->route('seller.categories.create')
-                ->with('info', 'Please create at least one category first before adding products.');
-        }
-        
         return view('seller.products.create', compact('categories')); 
     }
 
-    /**
-     * 3. STORE: Store a newly created product in storage
-     */
+    // 3. STORE: Save new product
     public function store(Request $request)
     {
         $seller = Seller::where('user_id', Auth::id())->first();
         
         if (!$seller) {
-            return redirect()->route('seller.dashboard')
-                ->with('error', 'You must have a seller profile to create products.');
+            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to create products.');
         }
 
         $validated = $request->validate([
@@ -71,13 +57,11 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0', 
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|max:2048',
         ]);
         
-        // Use the seller table ID, not the user_id
         $validated['seller_id'] = $seller->id;
 
-        // Handle image upload
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
             $validated['image'] = $path;
@@ -88,12 +72,10 @@ class ProductController extends Controller
         Product::create($validated);
         
         return redirect()->route('seller.products.index')
-            ->with('success', 'Product created successfully!');
+                         ->with('success', 'Product saved successfully.');
     }
 
-    /**
-     * 4. SHOW: Display the specified product
-     */
+    // 4. SHOW: Display single product
     public function show(Product $product)
     {
         $seller = Seller::where('user_id', Auth::id())->first();
@@ -105,9 +87,7 @@ class ProductController extends Controller
         return view('seller.products.show', compact('product'));
     }
 
-    /**
-     * 5. EDIT: Show the form for editing the specified product
-     */
+    // 5. EDIT: Show form to edit product
     public function edit(Product $product)
     {
         $seller = Seller::where('user_id', Auth::id())->first();
@@ -122,17 +102,10 @@ class ProductController extends Controller
 
         $categories = Category::where('seller_id', $seller->id)->get();
         
-        if ($categories->isEmpty()) {
-            return redirect()->route('seller.categories.create')
-                ->with('info', 'Please create at least one category first.');
-        }
-        
         return view('seller.products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * 6. UPDATE: Update the specified product in storage
-     */
+    // 6. UPDATE: Update product
     public function update(Request $request, Product $product)
     {
         $seller = Seller::where('user_id', Auth::id())->first();
@@ -151,17 +124,16 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
+            if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
             
-            // Store new image
             $path = $request->file('image')->store('products', 'public');
             $validated['image'] = $path;
         } else {
@@ -172,40 +144,29 @@ class ProductController extends Controller
         $product->update($validated);
 
         return redirect()->route('seller.products.index')
-            ->with('success', 'Product updated successfully!');
+                         ->with('success', 'Product updated successfully.');
     }
 
-    /**
-     * 7. DESTROY: Remove the specified product from storage
-     */
+    // 7. DESTROY: Delete product
     public function destroy(Product $product)
     {
         $seller = Seller::where('user_id', Auth::id())->first();
         
         if (!$seller) {
-            return response()->json([
-                'success' => false, 
-                'message' => 'No seller profile found.'
-            ], 403);
+            return response()->json(['success' => false, 'message' => 'No seller profile found.'], 403);
         }
 
         if ($product->seller_id !== $seller->id) {
-            return response()->json([
-                'success' => false, 
-                'message' => 'Unauthorized action.'
-            ], 403);
+            return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
         }
 
         // Delete image if exists
-        if ($product->image && Storage::disk('public')->exists($product->image)) {
+        if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
 
         $product->delete();
 
-        return response()->json([
-            'success' => true, 
-            'message' => 'Product deleted successfully!'
-        ]);
+        return response()->json(['success' => true, 'message' => 'Product deleted successfully.']);
     }
 }

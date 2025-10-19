@@ -97,3 +97,5 @@ Route::get('/home', function () {
 
         Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
+Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
+   Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('seller.products.destroy');

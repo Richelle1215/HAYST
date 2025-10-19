@@ -1,7 +1,7 @@
 @extends('seller.layout')
 
 @section('content')
-<div class="bg-white shadow rounded-lg p-6 mx-auto mt-8 w-full max-w-screen-2xl">
+<div class="p-6 mx-auto mt-8 w-full max-w-screen-2xl">
 
     <header class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">🗂 Categories</h1>
@@ -11,7 +11,7 @@
         </a>
     </header>
 
-<div class="overflow-x-auto">
+    <div class="overflow-x-auto">
     <table class="min-w-full w-full border border-gray-300 rounded-lg shadow">
         <thead class="bg-gray-100">
             <tr>
