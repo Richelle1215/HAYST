@@ -16,7 +16,7 @@ Schema::create('categories', function (Blueprint $table) {
     $table->string('name')->unique();
     $table->text('description')->nullable();
     $table->unsignedBigInteger('seller_id'); // ✅ Added
-    $table->foreign('seller_id')->references('id')->on('users')->onDelete('cascade'); // ✅ Added
+    $table->foreign('seller_id')->references('id')->on('sellers')->onDelete('cascade');
     $table->timestamps();
 });
 

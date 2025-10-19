@@ -11,16 +11,18 @@ use App\Models\Seller;
 
 class ProductController extends Controller
 {
+    /**
+     * 1. INDEX: Display a listing of products
+     */
     public function index()
     {
-        // Get the currently logged-in seller
         $seller = Seller::where('user_id', Auth::id())->first();
 
         if (!$seller) {
-            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to view products.');
+            return redirect()->route('seller.dashboard')
+                ->with('error', 'You must have a seller profile to view products.');
         }
 
-        // Fetch only products that belong to this seller
         $products = Product::where('seller_id', $seller->id)
             ->with('category')
             ->latest()
@@ -30,49 +32,52 @@ class ProductController extends Controller
     }
 
     /**
-     * 2. CREATE: Ipakita ang form para gumawa ng bagong Product
+     * 2. CREATE: Show the form for creating a new product
      */
     public function create()
     {
-        // Get the seller record for the authenticated user
         $seller = Seller::where('user_id', Auth::id())->first();
         
         if (!$seller) {
-            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to create products.');
+            return redirect()->route('seller.dashboard')
+                ->with('error', 'You must have a seller profile to create products.');
         }
         
-        // Get categories that belong to this seller
         $categories = Category::where('seller_id', $seller->id)->get(); 
+        
+        if ($categories->isEmpty()) {
+            return redirect()->route('seller.categories.create')
+                ->with('info', 'Please create at least one category first before adding products.');
+        }
         
         return view('seller.products.create', compact('categories')); 
     }
 
     /**
-     * 3. STORE: I-save ang bagong Product (FIXED)
+     * 3. STORE: Store a newly created product in storage
      */
     public function store(Request $request)
     {
-        // Get the seller record for the authenticated user
         $seller = Seller::where('user_id', Auth::id())->first();
         
         if (!$seller) {
-            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to create products.');
+            return redirect()->route('seller.dashboard')
+                ->with('error', 'You must have a seller profile to create products.');
         }
 
-        // Validation
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0', 
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
-        // Use the SELLER TABLE ID, not the user_id
+        // Use the seller table ID, not the user_id
         $validated['seller_id'] = $seller->id;
 
-        // Handle Image Upload
+        // Handle image upload
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
             $validated['image'] = $path;
@@ -80,36 +85,127 @@ class ProductController extends Controller
             $validated['image'] = null;
         }
 
-        // I-save ang produkto sa database
         Product::create($validated);
         
-        // Redirection at Success Message
         return redirect()->route('seller.products.index')
-                         ->with('success', 'Product saved successfully.');
+            ->with('success', 'Product created successfully!');
     }
 
     /**
-     * 5. EDIT: Ipakita ang form para i-edit ang Product
+     * 4. SHOW: Display the specified product
+     */
+    public function show(Product $product)
+    {
+        $seller = Seller::where('user_id', Auth::id())->first();
+        
+        if (!$seller || $product->seller_id !== $seller->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('seller.products.show', compact('product'));
+    }
+
+    /**
+     * 5. EDIT: Show the form for editing the specified product
      */
     public function edit(Product $product)
     {
-        // Get the seller record
         $seller = Seller::where('user_id', Auth::id())->first();
         
         if (!$seller) {
             abort(403, 'No seller profile found.');
         }
 
-        // Check if the product belongs to the authenticated seller (Security)
         if ($product->seller_id !== $seller->id) {
             abort(403, 'Unauthorized action.'); 
         }
 
-        // Get categories that belong to this seller
         $categories = Category::where('seller_id', $seller->id)->get();
+        
+        if ($categories->isEmpty()) {
+            return redirect()->route('seller.categories.create')
+                ->with('info', 'Please create at least one category first.');
+        }
         
         return view('seller.products.edit', compact('product', 'categories'));
     }
-    
-    // Add your other methods here (show, update, destroy)
+
+    /**
+     * 6. UPDATE: Update the specified product in storage
+     */
+    public function update(Request $request, Product $product)
+    {
+        $seller = Seller::where('user_id', Auth::id())->first();
+        
+        if (!$seller) {
+            abort(403, 'No seller profile found.');
+        }
+
+        if ($product->seller_id !== $seller->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+            
+            // Store new image
+            $path = $request->file('image')->store('products', 'public');
+            $validated['image'] = $path;
+        } else {
+            // Keep the existing image if no new image is uploaded
+            unset($validated['image']);
+        }
+
+        $product->update($validated);
+
+        return redirect()->route('seller.products.index')
+            ->with('success', 'Product updated successfully!');
+    }
+
+    /**
+     * 7. DESTROY: Remove the specified product from storage
+     */
+    public function destroy(Product $product)
+    {
+        $seller = Seller::where('user_id', Auth::id())->first();
+        
+        if (!$seller) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'No seller profile found.'
+            ], 403);
+        }
+
+        if ($product->seller_id !== $seller->id) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Unauthorized action.'
+            ], 403);
+        }
+
+        // Delete image if exists
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        $product->delete();
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'Product deleted successfully!'
+        ]);
+    }
 }
