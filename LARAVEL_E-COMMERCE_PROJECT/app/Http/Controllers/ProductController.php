@@ -4,100 +4,112 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Seller;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('category')->latest()->paginate(10);
+        // Get the currently logged-in seller
+        $seller = Seller::where('user_id', Auth::id())->first();
+
+        if (!$seller) {
+            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to view products.');
+        }
+
+        // Fetch only products that belong to this seller
+        $products = Product::where('seller_id', $seller->id)
+            ->with('category')
+            ->latest()
+            ->paginate(10);
+
         return view('seller.products.index', compact('products'));
     }
 
+    /**
+     * 2. CREATE: Ipakita ang form para gumawa ng bagong Product
+     */
     public function create()
     {
-        $categories = Category::all();
-        return view('seller.products.create', compact('categories'));
+        // Get the seller record for the authenticated user
+        $seller = Seller::where('user_id', Auth::id())->first();
+        
+        if (!$seller) {
+            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to create products.');
+        }
+        
+        // Get categories that belong to this seller
+        $categories = Category::where('seller_id', $seller->id)->get(); 
+        
+        return view('seller.products.create', compact('categories')); 
     }
 
+    /**
+     * 3. STORE: I-save ang bagong Product (FIXED)
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|max:255',
-            'description' => 'required',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+        // Get the seller record for the authenticated user
+        $seller = Seller::where('user_id', Auth::id())->first();
+        
+        if (!$seller) {
+            return redirect()->route('seller.dashboard')->with('error', 'You must have a seller profile to create products.');
         }
 
-        Product::create([
-            'category_id' => $request->category_id,
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'image' => $imagePath,
+        // Validation
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0', 
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|max:2048',
         ]);
+        
+        // Use the SELLER TABLE ID, not the user_id
+        $validated['seller_id'] = $seller->id;
 
+        // Handle Image Upload
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 'public');
+            $validated['image'] = $path;
+        } else {
+            $validated['image'] = null;
+        }
+
+        // I-save ang produkto sa database
+        Product::create($validated);
+        
+        // Redirection at Success Message
         return redirect()->route('seller.products.index')
-                         ->with('success', 'Product created successfully.');
+                         ->with('success', 'Product saved successfully.');
     }
 
+    /**
+     * 5. EDIT: Ipakita ang form para i-edit ang Product
+     */
     public function edit(Product $product)
     {
-        $categories = Category::all();
+        // Get the seller record
+        $seller = Seller::where('user_id', Auth::id())->first();
+        
+        if (!$seller) {
+            abort(403, 'No seller profile found.');
+        }
+
+        // Check if the product belongs to the authenticated seller (Security)
+        if ($product->seller_id !== $seller->id) {
+            abort(403, 'Unauthorized action.'); 
+        }
+
+        // Get categories that belong to this seller
+        $categories = Category::where('seller_id', $seller->id)->get();
+        
         return view('seller.products.edit', compact('product', 'categories'));
     }
-
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-
-        $data = $request->only(['name', 'description', 'price', 'category_id']);
-
-        // ✅ If there’s a new image uploaded
-        if ($request->hasFile('image')) {
-            // delete old image if exists
-            if ($product->image && file_exists(public_path('storage/' . $product->image))) {
-                unlink(public_path('storage/' . $product->image));
-            }
-
-            // store new image
-            $path = $request->file('image')->store('products', 'public');
-            $data['image'] = $path;
-        }
-
-        $product->update($data);
-
-        return redirect()->route('seller.products.index')
-                        ->with('success', 'Product updated successfully!');
-    }
-
-
-    public function destroy(Product $product)
-    {
-        if ($product->image && Storage::disk('public')->exists($product->image)) {
-            Storage::disk('public')->delete($product->image);
-        }
-
-        $product->delete();
-
-        return redirect()->route('seller.products.index')
-                         ->with('success', 'Product deleted successfully.');
-    }
+    
+    // Add your other methods here (show, update, destroy)
 }
