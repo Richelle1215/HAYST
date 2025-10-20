@@ -2,11 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Seller extends Model
 {
-    protected $fillable = ['user_id', 'store_name', 'store_description'];
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int,string>
+     */
+    protected $fillable = [
+        'user_id',
+        'shop_name',
+        // add other seller columns you want to mass assign
+    ];
 
     public function user()
     {

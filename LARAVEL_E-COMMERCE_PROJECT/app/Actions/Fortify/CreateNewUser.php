@@ -45,14 +45,13 @@ class CreateNewUser implements CreatesNewUsers
         ];
 
         // Seller-specific Validation Rules
-        if ($role === 'seller' && !$isFirstUser) {
-             // FIXED: Gamitin ang 'store_name' column na talagang existing sa database
-             $rules['shopname'] = ['required', 'string', 'max:255', 'unique:sellers,store_name']; 
+        if (($input['role'] ?? null) === 'seller') {
+            $rules['shopname'] = ['required', 'string', 'max:255', 'unique:sellers,shop_name']; 
         }
         
         // Run Validation
         Validator::make($input, $rules)->validate();
-
+        
         return DB::transaction(function () use ($input, $role, $isFirstUser) {
             
             // 2. Create the User
@@ -71,7 +70,7 @@ class CreateNewUser implements CreatesNewUsers
                 // FIXED: Gamitin ang 'store_name' column na talagang existing sa database
                 Seller::create([
                     'user_id' => $user->id,
-                    'store_name' => $shopName,
+                    'shop_name' => $shopName,
                 ]);
             } elseif ($user->role === 'customer') {
                 Customer::create(['user_id' => $user->id]);
