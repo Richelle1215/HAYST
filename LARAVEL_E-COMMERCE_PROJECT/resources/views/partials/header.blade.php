@@ -52,7 +52,7 @@
                 <a href="#" class="text-2xl text-gray-700 hover:text-[#8C5B56] transition mr-3">&#x1F6D2;</a> 
                 
                 {{-- Vertical Separator --}}
-                <div class="h-6 w-px bg-gray-300"></div>
+        <div class="h-6 w-px bg-gray-300"></div>
 
                 {{-- Auth Links (Login/Register/Admin) --}}
                     @if (Route::has('login'))
