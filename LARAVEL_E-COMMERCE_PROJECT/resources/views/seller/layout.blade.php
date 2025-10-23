@@ -1,3 +1,4 @@
+<a href="{{ route('seller.products.index') }}" class="text-indigo-600 hover:underline mb-4 inline-block">&larr; Back to Product List</a>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>

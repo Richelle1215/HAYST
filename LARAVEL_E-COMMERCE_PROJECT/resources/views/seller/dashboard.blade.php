@@ -1,3 +1,4 @@
+
 @extends('seller.layout')
 
 @section('content')
