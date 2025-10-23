@@ -4,14 +4,7 @@
     <div class="max-w-screen-2xl mx-auto px-10 lg:px-16 py-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
 
-            <div class="col-span-2 md:col-span-1">
-                {{-- Logo --}}
-                <img
-                    src="{{ asset('image/logo/whitetext-logo.png') }}" 
-                    alt="logo"
-                    class="mb-4 w-36 h-auto"
-                >
-            </div>
+
 
             <div>
                 {{-- Shop Links --}}
@@ -49,7 +42,7 @@
         {{-- Footer line at copyright --}}
         <div class="mt-8 pt-4 border-t" style="border-color: #555555; opacity: 0.8;">
             <p class="text-center text-xs" style="color: #AAAAAA;">
-                &copy; 2025 ELLE FASHSION Goods. All rights reserved.
+                &copy; 2025 LUMIÈRE Goods. All rights reserved.
             </p>
         </div>
     </div>
