@@ -8,6 +8,7 @@
         use Illuminate\Support\Facades\Auth;
         use App\Http\Controllers\Seller\OrderController;
         use App\Http\Controllers\Seller\SellerProfileController;
+      
         /*
         |--------------------------------------------------------------------------
         | Public Routes
@@ -43,9 +44,17 @@ Route::get('/home', function () {
     Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/update', [SellerProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/update-password', [SellerProfileController::class, 'updatePassword'])->name('profile.updatePassword');
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index'); // ✅ Add this line
+    Route::get('/orders', [OrderController::class, 'index'])->name('seller.orders.index');
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
-    
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+    // PROFILE ROUTES
+        Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile.index');
+        Route::post('/profile/update', [SellerProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile/update-password', [SellerProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+        
+        // ✅ NEW: ACCOUNT DELETION ROUTE
+        Route::delete('/profile', [SellerProfileController::class, 'delete'])->name('profile.delete');
     });
 
 
@@ -99,3 +108,6 @@ Route::get('/home', function () {
 
 Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('seller.products.destroy');
+
+ 
+

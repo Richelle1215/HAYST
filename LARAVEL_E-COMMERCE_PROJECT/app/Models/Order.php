@@ -10,15 +10,21 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'seller_id',
-        'customer_name',
-        'customer_email',
-        'status',
+        'user_id',
+        'event_name',
+        'buyer_name',
         'total',
+        'refund_method',
+        'status',
     ];
 
-    public function items()
+    protected $casts = [
+        'total' => 'decimal:2',
+        'created_at' => 'datetime',
+    ];
+
+    public function user()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->belongsTo(User::class);
     }
 }
