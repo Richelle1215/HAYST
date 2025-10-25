@@ -1,9 +1,9 @@
 @extends('seller.layout')
 
 @section('content')
-<div class="min-h-screen flex items-start justify-center bg-gray-100 p-6 pt-12">
+
     <div class="w-full max-w-screen-2xl bg-white shadow-md rounded-lg p-8">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">➕ Add New Category</h1>
+        <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">+ Add New Category</h1>
 
         <form action="{{ route('seller.categories.store') }}" method="POST" class="space-y-4">
             @csrf
@@ -26,7 +26,7 @@
                 <a href="{{ route('seller.categories.index') }}" 
                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">Cancel</a>
                 <button type="submit" 
-                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Save Category</button>
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-green-700 transition">Save Category</button>
             </div>
         </form>
     </div>

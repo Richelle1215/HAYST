@@ -2,12 +2,11 @@
 @extends('seller.layout')
 
 @section('content')
-<div class="bg-white shadow-lg rounded-xl max-w-6xl mx-auto p-10 flex items-start justify-center">
- 
+
 
     <main class="flex-1 p-8 overflow-y-auto">
-        <div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-8">
-            <h1 class="text-2xl font-bold text-gray-800 mb-6">➕ Add New Product</h1>
+        
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">+ Add New Product</h1>
 
             <form action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -51,7 +50,7 @@
 
                 <div class="flex justify-end space-x-4">
                     <a href="{{ route('seller.products.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
-                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save Product</button>
+                    <button type="submit" class="bg-gray-500 text-white  px-4 py-2 rounded hover:bg-green-700">Save Product</button>
                 </div>
             </form>
         </div>

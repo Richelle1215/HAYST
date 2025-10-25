@@ -1,8 +1,8 @@
 @extends('seller.layout') {{-- Dapat tama ang path ng seller layout mo --}}
 
 @section('content')
-    <div class="p-6 bg-white rounded-lg shadow-xl">
-        {{-- Header at Buttons --}}
+    
+      
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Orders</h1>
             {{-- ... Export at More Actions Buttons ... --}}

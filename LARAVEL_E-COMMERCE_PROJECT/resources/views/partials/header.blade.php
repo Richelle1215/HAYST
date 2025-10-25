@@ -80,7 +80,7 @@
                         @if (Route::has('register'))
                             {{-- Register link --}}
                             <a href="{{ route('register') }}"
-                                class="text-sm font-semibold text-white px-3 py-1 rounded transition bg-[#8C5B56] hover:bg-[#7A4E49]">
+                                class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition">
                                 REGISTER
                             </a>
                         @endif

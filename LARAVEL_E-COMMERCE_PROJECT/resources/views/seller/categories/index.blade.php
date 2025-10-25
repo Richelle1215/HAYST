@@ -6,7 +6,7 @@
     <header class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">🗂 Categories</h1>
         <a href="{{ route('seller.categories.create') }}"
-           class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md">
             ➕ Add Category
         </a>
     </header>
