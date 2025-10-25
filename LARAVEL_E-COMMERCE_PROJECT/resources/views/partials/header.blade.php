@@ -60,7 +60,7 @@
                         @elseif ($role === 'seller')
                             <a href="{{ route('seller.dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition">Seller Dashboard</a>
                         @else
-                            <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition">My Dashboard</a>
+                            <a href="{{ route('dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-[#8C5B56] transition">Customer Dashboard</a>
                         @endif
 
                         <form method="POST" action="{{ route('logout') }}" class="inline">
