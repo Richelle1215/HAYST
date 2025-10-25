@@ -30,7 +30,17 @@
                            class="block px-4 py-2 text-sm text-indigo-700 hover:bg-indigo-50 hover:text-indigo-900 transition">
                             All Products
                         </a>
-                        
+                        {{-- Category List --}}
+@if(isset($categories) && $categories->count() > 0)
+    @foreach($categories as $category)
+        <a href="{{ route('products.filter', $category) }}" 
+           class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-900 transition">
+            {{ $category->name }}
+        </a>
+    @endforeach
+@else
+    <p class="px-4 py-2 text-sm text-gray-500">No categories available</p>
+@endif
                         {{-- Category List --}}
                         @foreach($categories as $category)
                             <a href="{{ route('products.filter', $category) }}" 

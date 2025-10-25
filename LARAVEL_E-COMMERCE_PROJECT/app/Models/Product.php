@@ -12,13 +12,13 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'slug',
         'description',
         'price',
         'stock',
         'category_id',
-        'image',
-        'seller_id'
+        'shop_name',
+        'seller_id',
+        'image'
     ];
 
     // Auto-generate slug when creating/updating
@@ -69,4 +69,10 @@ class Product extends Model
     {
         return $this->belongsTo(Seller::class, 'seller_id');
     }
+    public function show($id)
+{
+    $product = Product::with(['category', 'seller'])->findOrFail($id);
+    return view('products.show', compact('product'));
+}
+    
 }

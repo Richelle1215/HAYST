@@ -17,6 +17,7 @@ class Seller extends Model
     protected $fillable = [
         'user_id',
         'shop_name',
+        'email',
         // add other seller columns you want to mass assign
     ];
 

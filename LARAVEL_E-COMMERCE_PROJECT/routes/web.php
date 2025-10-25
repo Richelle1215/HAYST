@@ -47,7 +47,7 @@ Route::get('/home', function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('seller.orders.index');
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-
+    Route::get('store', [StoreController::class, 'index'])->name('store.index');
     // PROFILE ROUTES
         Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile.index');
         Route::post('/profile/update', [SellerProfileController::class, 'update'])->name('profile.update');
@@ -110,4 +110,26 @@ Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name
    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('seller.products.destroy');
 
  
+use App\Http\Controllers\CartController;
 
+// Cart Routes
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+
+Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+Route::get('/clear-cart-session', function() {
+    session()->forget('cart');
+    return redirect()->route('cart.index')->with('success', 'Cart cleared!');
+});
+
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+
+Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+
+
+//customer

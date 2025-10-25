@@ -119,6 +119,7 @@
                        class="{{ request()->is('seller/profile*') ? 'active' : '' }}">
                        👤 Profile
                     </a>
+
                 </nav>
             </div>
 

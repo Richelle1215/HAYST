@@ -76,16 +76,21 @@ class ProductController extends Controller
     }
 
     // 4. SHOW: Display single product
-    public function show(Product $product)
-    {
-        $seller = Seller::where('user_id', Auth::id())->first();
+public function show($slug)
+{
+    try {
+        // Load product with relationships
+        $product = Product::with(['category', 'seller'])
+            ->where('slug', $slug)
+            ->firstOrFail();
         
-        if (!$seller || $product->seller_id !== $seller->id) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return view('seller.products.show', compact('product'));
+        return view('products.show', compact('product'));
+        
+    } catch (\Exception $e) {
+        return redirect()->route('products.index')
+            ->with('error', 'Product not found.');
     }
+}
 
     // 5. EDIT: Show form to edit product
     public function edit(Product $product)
