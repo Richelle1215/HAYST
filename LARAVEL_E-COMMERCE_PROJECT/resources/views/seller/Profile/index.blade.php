@@ -1,7 +1,7 @@
 @extends('seller.layout') 
 
 @section('content')
-    <div class="p-6 bg-white rounded-lg shadow-xl">
+  
         <h1 class="text-3xl font-bold text-gray-800 mb-6">👤 Profile Settings</h1>
 
         {{-- Success Messages --}}

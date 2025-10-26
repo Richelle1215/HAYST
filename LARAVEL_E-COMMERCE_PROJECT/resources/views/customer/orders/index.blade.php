@@ -1,224 +1,344 @@
 @extends('customer.layout')
-
 @section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - LUMIÈRE</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .font-serif-elegant {
+            font-family: 'Playfair Display', serif;
+        }
 
-<div class="container-fluid px-4 py-6">
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
 
-    <h1 class="text-4xl font-bold text-gray-900 mb-6 tracking-wide uppercase">My Orders</h1>
+        .tab-btn.active {
+            color: #8C5B56;
+            font-weight: 600;
+        }
 
-    {{-- Sticky Order Status Tabs --}}
-    <div class="sticky top-0 z-20 bg-white shadow-sm mb-6 rounded-lg">
-        <div class="flex border-b overflow-x-auto no-scrollbar">
-            @php
-                $tabs = [
-                    'all' => 'All',
-                    'to_pay' => 'To Pay',
-                    'to_ship' => 'To Ship',
-                    'to_receive' => 'To Receive',
-                    'completed' => 'Completed',
-                    'cancelled' => 'Cancelled',
-                    'return_refund' => 'Return/Refund'
-                ];
-            @endphp
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8C5B56, #A67C75);
+            border-radius: 3px 3px 0 0;
+        }
 
-            @foreach ($tabs as $key => $label)
-            <button class="tab-btn px-6 py-4 font-medium text-gray-700 hover:text-red-700 border-b-2
-                border-transparent hover:border-red-700 whitespace-nowrap transition-all"
-                data-status="{{ $key }}">
-                {{ $label }}
-            </button>
-            @endforeach
+        .tab-btn:hover {
+            color: #8C5B56;
+            transform: translateY(-2px);
+        }
+
+        .order-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .order-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-color: #8C5B56;
+        }
+
+        .progress-bar-animated {
+            animation: progressAnimation 0.8s ease-out;
+        }
+
+        @keyframes progressAnimation {
+            from { width: 0; }
+        }
+
+        .status-badge {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8C5B56 0%, #A67C75 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(140, 91, 86, 0.3);
+        }
+
+        .product-image {
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <div class="container mx-auto px-4 py-12 mt-16 max-w-7xl">
+
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="font-serif-elegant text-5xl font-bold text-gray-900 mb-2">My Orders</h1>
+            <p class="text-gray-600 text-lg">Track and manage your jewelry orders</p>
         </div>
-    </div>
 
-    {{-- Orders Content --}}
-    <div id="orders-container">
-        @if($orders->isEmpty())
-            <div class="bg-white rounded-xl shadow-md p-12 text-center">
-                <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png"
-                    class="mx-auto w-24 opacity-70 mb-4" alt="Empty Icon">
-
-                <p class="text-gray-500 text-lg">No orders yet. Explore amazing jewelry!</p>
-
-                <a href="{{ route('store.index') }}"
-                    class="inline-block mt-6 px-6 py-3 bg-red-700 text-white font-semibold rounded-lg
-                    hover:bg-red-800 transition">
-                    Shop Now
-                </a>
-            </div>
-        @else
-
-        @foreach($orders as $order)
-        <div class="order-card bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6"
-             data-status="{{ $order->status }}">
-
-            {{-- Order Header --}}
-            <div class="bg-gray-50 px-6 py-4 flex justify-between items-center">
-                <div class="text-sm font-medium text-gray-600">
-                    Order #{{ $order->id }}
-                    <span class="text-gray-400 mx-2">|</span>
-                    {{ $order->created_at->format('M d, Y h:i A') }}
-                </div>
-
+        <!-- Sticky Order Status Tabs -->
+        <div class="sticky top-16 z-20 bg-white shadow-xl mb-8 rounded-2xl overflow-hidden">
+            <div class="flex border-b-2 border-gray-100 overflow-x-auto no-scrollbar">
                 @php
-                    $statusColor = [
-                        'pending' => 'bg-yellow-100 text-yellow-800',
-                        'processing' => 'bg-blue-100 text-blue-800',
-                        'shipped' => 'bg-purple-100 text-purple-800',
-                        'completed' => 'bg-green-100 text-green-800',
-                        'cancelled' => 'bg-red-100 text-red-800',
-                        'refunded' => 'bg-orange-100 text-orange-800'
+                    $tabs = [
+                        'all' => ['label' => 'All Orders', 'icon' => '📦'],
+                        'pending' => ['label' => 'To Pay', 'icon' => '💳'],
+                        'processing' => ['label' => 'Processing', 'icon' => '⏳'],
+                        'shipped' => ['label' => 'Shipped', 'icon' => '🚚'],
+                        'completed' => ['label' => 'Completed', 'icon' => '✅'],
+                        'cancelled' => ['label' => 'Cancelled', 'icon' => '❌'],
                     ];
                 @endphp
 
-                <span class="px-3 py-1 text-sm font-semibold rounded-full {{ $statusColor[$order->status] ?? 'bg-gray-100 text-gray-700' }}">
-                    {{ ucfirst($order->status) }}
-                </span>
-            </div>
-
-            {{-- Order Items --}}
-            <div class="px-6 py-4 divide-y">
-                @foreach($order->items as $item)
-                <div class="flex gap-4 py-4">
-                    <img src="{{ $item->product->image ?? 'https://via.placeholder.com/100' }}"
-                         class="w-24 h-24 rounded-lg border border-gray-300 object-cover">
-
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-gray-900">{{ $item->product->name }}</h3>
-
-                        @if($item->product->variation)
-                        <p class="text-sm text-gray-500">Variant: {{ $item->product->variation }}</p>
-                        @endif
-
-                        <p class="text-sm text-gray-500 mt-1">x{{ $item->quantity }}</p>
-                    </div>
-
-                    <div class="text-right">
-                        <p class="text-lg font-bold text-red-700">
-                            ₱{{ number_format($item->price, 2) }}
-                        </p>
-                    </div>
-                </div>
+                @foreach ($tabs as $key => $data)
+                <button class="tab-btn px-8 py-5 font-medium text-gray-700 whitespace-nowrap transition-all flex items-center gap-2 {{ $loop->first ? 'active' : '' }}"
+                        data-status="{{ $key }}">
+                    <span class="text-2xl">{{ $data['icon'] }}</span>
+                    <span>{{ $data['label'] }}</span>
+                </button>
                 @endforeach
             </div>
+        </div>
 
-            {{-- Progress Bar --}}
-            <div class="relative w-full px-6 pb-4">
-                @php
-                    $progress = match($order->status) {
-                        'pending' => 20,
-                        'processing' => 50,
-                        'shipped' => 80,
-                        'completed' => 100,
-                        default => 0,
-                    };
-                @endphp
-
-                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                    <div class="bg-red-700 h-2 rounded-full transition-all" style="width: {{ $progress }}%"></div>
+        <!-- Orders Content -->
+        <div id="orders-container">
+            @if($orders->isEmpty())
+                <div class="bg-white rounded-3xl shadow-2xl p-16 text-center">
+                    <div class="mb-6">
+                        <svg class="w-32 h-32 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-800 mb-3">No Orders Yet</h3>
+                    <p class="text-gray-500 text-lg mb-8">Discover our exquisite jewelry collection!</p>
+                    <a href="{{ route('store.index') }}"
+                       class="inline-block px-10 py-4 btn-primary text-white font-bold rounded-xl text-lg shadow-lg">
+                        Start Shopping ✨
+                    </a>
                 </div>
-                <p class="text-xs text-gray-500 mt-1">Order Progress: {{ $progress }}%</p>
-            </div>
+            @else
 
-            {{-- Order Footer --}}
-            <div class="bg-gray-50 px-6 py-4 flex justify-between items-center">
-                <div class="text-sm text-gray-700">
-                    Total:
-                    <span class="text-xl font-bold text-red-700">
-                        ₱{{ number_format($order->total_amount, 2) }}
+            @foreach($orders as $order)
+            <div class="order-card bg-white rounded-2xl shadow-lg overflow-hidden mb-6"
+                 data-status="{{ $order->status }}">
+
+                <!-- Order Header -->
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-5 flex justify-between items-center border-b-2 border-gray-200">
+                    <div class="flex items-center gap-4">
+                        <div class="text-sm font-semibold text-gray-800">
+                            <span class="text-[#8C5B56]">Order #{{ $order->order_number }}</span>
+                        </div>
+                        <span class="text-gray-400">•</span>
+                        <div class="text-sm text-gray-600">
+                            {{ $order->created_at->format('M d, Y • h:i A') }}
+                        </div>
+                    </div>
+
+                    @php
+                        $statusConfig = [
+                            'pending' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-800', 'icon' => '⏱️'],
+                            'processing' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-800', 'icon' => '🔄'],
+                            'shipped' => ['bg' => 'bg-purple-100', 'text' => 'text-purple-800', 'icon' => '📦'],
+                            'completed' => ['bg' => 'bg-green-100', 'text' => 'text-green-800', 'icon' => '✅'],
+                            'cancelled' => ['bg' => 'bg-red-100', 'text' => 'text-red-800', 'icon' => '❌'],
+                        ];
+                        $config = $statusConfig[$order->status] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-700', 'icon' => '📋'];
+                    @endphp
+
+                    <span class="status-badge px-4 py-2 text-sm font-bold rounded-full {{ $config['bg'] }} {{ $config['text'] }} flex items-center gap-2">
+                        <span>{{ $config['icon'] }}</span>
+                        {{ ucfirst($order->status) }}
                     </span>
                 </div>
 
-                <div class="flex gap-3">
-                    {{-- Action buttons based on status --}}
-                    @if($order->status == 'pending')
-                    <button class="px-5 py-2 bg-red-700 text-white font-medium rounded-lg hover:bg-red-800 transition">
-                        Pay Now
-                    </button>
+                <!-- Order Items -->
+                <div class="px-8 py-6 divide-y divide-gray-100">
+                    @foreach($order->items as $item)
+                    <div class="flex gap-6 py-5 items-center">
+                        <div class="w-28 h-28 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 shadow-md">
+                            @if($item->product->image)
+                                <img src="{{ asset('storage/' . $item->product->image) }}"
+                                     alt="{{ $item->product->name }}"
+                                     class="w-full h-full object-cover product-image">
+                            @else
+                                <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
 
-                    @elseif($order->status == 'shipped')
-                    <button class="px-5 py-2 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 transition">
-                        Order Received
-                    </button>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg text-gray-900 mb-1">{{ $item->product->name }}</h3>
+                            <p class="text-sm text-gray-500 mb-2">
+                                <span class="font-semibold">Shop:</span> {{ $item->product->shop_name ?? 'N/A' }}
+                            </p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                    Qty: <span class="font-bold">{{ $item->quantity }}</span>
+                                </span>
+                                <span class="text-sm text-gray-400">×</span>
+                                <span class="text-sm text-gray-600">₱{{ number_format($item->price, 2) }}</span>
+                            </div>
+                        </div>
 
-                    @elseif($order->status == 'completed')
-                    <a href="{{ route('store.index') }}"
-                       class="px-5 py-2 bg-red-700 text-white font-medium rounded-lg hover:bg-red-800 transition">
-                        Buy Again
-                    </a>
-                    @endif
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-[#8C5B56]">
+                                ₱{{ number_format($item->price * $item->quantity, 2) }}
+                            </p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
 
-                    <a href="{{ route('customer.orders.show', $order->id) }}"
-                       class="px-5 py-2 border border-gray-400 text-gray-800 font-medium rounded-lg hover:bg-gray-100 transition">
-                        View Details
-                    </a>
+                <!-- Progress Bar -->
+                <div class="px-8 pb-6">
+                    @php
+                        $progress = match($order->status) {
+                            'pending' => 25,
+                            'processing' => 50,
+                            'shipped' => 75,
+                            'completed' => 100,
+                            default => 0,
+                        };
+                    @endphp
+
+                    <div class="relative">
+                        <div class="flex justify-between text-xs font-semibold text-gray-600 mb-2">
+                            <span>Order Progress</span>
+                            <span>{{ $progress }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
+                            <div class="progress-bar-animated bg-gradient-to-r from-[#8C5B56] to-[#A67C75] h-3 rounded-full transition-all duration-1000" 
+                                 style="width: {{ $progress }}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Footer -->
+                <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6 flex justify-between items-center border-t-2 border-gray-200">
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-sm font-medium text-gray-600">Order Total:</span>
+                        <span class="text-3xl font-bold text-[#8C5B56]">
+                            ₱{{ number_format($order->total_amount, 2) }}
+                        </span>
+                    </div>
+
+                    <div class="flex gap-3">
+                        @if($order->status == 'pending')
+                        <button class="px-6 py-3 btn-primary text-white font-bold rounded-xl shadow-lg">
+                            💳 Pay Now
+                        </button>
+
+                        @elseif($order->status == 'shipped')
+                        <button class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-xl hover:shadow-lg transition-all">
+                            ✅ Order Received
+                        </button>
+
+                        @elseif($order->status == 'completed')
+                        <a href="{{ route('store.index') }}"
+                           class="px-6 py-3 btn-primary text-white font-bold rounded-xl shadow-lg">
+                            🛍️ Buy Again
+                        </a>
+                        @endif
+
+                        <a href="{{ route('customer.orders.show', $order->id) }}"
+                           class="px-6 py-3 border-2 border-[#8C5B56] text-[#8C5B56] font-bold rounded-xl hover:bg-[#8C5B56] hover:text-white transition-all">
+                            View Details →
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        @endforeach
+            @endforeach
 
-        @endif
+            @endif
+        </div>
+
     </div>
 
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const cards = document.querySelectorAll('.order-card');
+            const container = document.getElementById('orders-container');
 
-<style>
-    .tab-btn.active {
-        color: #b91c1c;
-        border-bottom-color: #b91c1c;
-        font-weight: 600;
-    }
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-</style>
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const status = tab.dataset.status;
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tabs = document.querySelectorAll('.tab-btn');
-        const cards = document.querySelectorAll('.order-card');
-        const container = document.getElementById('orders-container');
+                    let visible = 0;
+                    cards.forEach(card => {
+                        const cardStatus = card.dataset.status;
+                        const show = status === 'all' || status === cardStatus;
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const status = tab.dataset.status;
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
+                        card.style.display = show ? 'block' : 'none';
+                        if(show) visible++;
+                    });
 
-                let visible = 0;
-                cards.forEach(card => {
-                    const cardStatus = card.dataset.status;
-
-                    const show =
-                        status === 'all' ||
-                        (status === 'to_pay' && cardStatus === 'pending') ||
-                        (status === 'to_ship' && cardStatus === 'processing') ||
-                        (status === 'to_receive' && cardStatus === 'shipped') ||
-                        (status === 'completed' && cardStatus === 'completed') ||
-                        (status === 'cancelled' && cardStatus === 'cancelled') ||
-                        (status === 'return_refund' && cardStatus === 'refunded');
-
-                    card.style.display = show ? 'block' : 'none';
-                    if(show) visible++;
-                });
-
-                const msg = document.getElementById('no-orders-message');
-                if (!visible && cards.length) {
-                    if (!msg) {
-                        const div = document.createElement('div');
-                        div.id = 'no-orders-message';
-                        div.className = 'bg-white rounded-lg shadow p-10 text-center text-gray-600';
-                        div.innerHTML = `
-                            <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png"
-                                class="mx-auto w-20 opacity-70 mb-3">
-                            No orders in this status.
-                        `;
-                        container.appendChild(div);
+                    // Show "no orders" message
+                    const msg = document.getElementById('no-orders-message');
+                    if (!visible && cards.length) {
+                        if (!msg) {
+                            const div = document.createElement('div');
+                            div.id = 'no-orders-message';
+                            div.className = 'bg-white rounded-3xl shadow-2xl p-16 text-center';
+                            div.innerHTML = `
+                                <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                                </svg>
+                                <h3 class="text-2xl font-bold text-gray-700 mb-2">No orders in this status</h3>
+                                <p class="text-gray-500">Check other tabs to view your orders</p>
+                            `;
+                            container.appendChild(div);
+                        }
+                    } else if(msg) {
+                        msg.remove();
                     }
-                } else if(msg) msg.remove();
+                });
             });
         });
-    });
-</script>
+    </script>
 
+</body>
+</html>
 @endsection

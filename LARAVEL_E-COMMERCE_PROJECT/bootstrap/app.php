@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
             ->withMiddleware(function (Middleware $middleware) {
                 $middleware->web(append: [
                     'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
+                ]);
+                $middleware->alias([
+                    'seller' => \App\Http\Middleware\EnsureSeller::class,
                    //\App\Http\Middleware\PreventBackHistory::class,
                 ]);
             })

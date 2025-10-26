@@ -216,7 +216,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('customer.cart') }}">
+                <a href="{{ route('customer.cart.index') }}">
                     <span>🛒</span> My Cart
                 </a>
             </li>

@@ -11,20 +11,31 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'event_name',
-        'buyer_name',
-        'total',
-        'refund_method',
-        'status',
+        'order_number',
+        'contact_number',
+        'shipping_address',
+        'payment_method',
+        'notes',
+        'total_amount',
+        'status'
     ];
 
-    protected $casts = [
-        'total' => 'decimal:2',
-        'created_at' => 'datetime',
-    ];
-
+    // Relationship: Order belongs to User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relationship: Order has many OrderItems
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+
+public function orderItems()
+{
+    return $this->hasMany(OrderItem::class);
+}
+
 }

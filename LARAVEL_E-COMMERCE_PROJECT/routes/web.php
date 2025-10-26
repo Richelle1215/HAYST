@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\DashboardController;
-
 use App\Http\Controllers\Customer\CustomerProfileController;
-use App\Http\Controllers\Seller\SellerProfileController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\CustomerOrderController;
 
+use App\Http\Controllers\Seller\SellerProfileController;
+use App\Http\Controllers\Seller\SellerOrderController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes (No Authentication Required)
@@ -65,23 +65,25 @@ Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(functi
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [CustomerOrderController::class, 'show'])->name('orders.show');
     // Cart
-    Route::get('/cart', [CartController::class, 'index'])->name('cart');
-    Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-    Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     
-    // Checkout
-    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
-    Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+    // Checkout routes
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', [CheckoutController::class, 'index'])->name('index');
+        Route::post('/process', [CheckoutController::class, 'process'])->name('process');
 });
-
+});
 /*
 |--------------------------------------------------------------------------
 | Seller Routes (Authenticated & Verified)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->prefix('seller')->name('seller.')->group(function () {
+// ✅ Single consolidated seller route group
+Route::middleware(['auth', 'verified', 'seller'])->prefix('seller')->name('seller.')->group(function () {
+    
     // Dashboard
     Route::get('/dashboard', function () {
         return view('seller.dashboard');
@@ -89,20 +91,23 @@ Route::middleware(['auth', 'verified'])->prefix('seller')->name('seller.')->grou
     
     // Products
     Route::resource('products', ProductController::class);
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     
     // Categories
     Route::resource('categories', CategoryController::class);
     
     // Orders
     Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
-    
+    Route::get('/orders/{id}', [SellerOrderController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{id}/status', [SellerOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::get('/seller/orders/{id}', [SellerOrderController::class, 'show'])->name('seller.orders.show');
+
     // Profile
     Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/update', [SellerProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/update-password', [SellerProfileController::class, 'updatePassword'])->name('profile.updatePassword');
     Route::delete('/profile', [SellerProfileController::class, 'delete'])->name('profile.delete');
+
+    
 });
 
 /*
