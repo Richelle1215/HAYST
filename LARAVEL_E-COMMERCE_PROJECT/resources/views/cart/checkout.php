@@ -10,8 +10,9 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-
 <body class="bg-light">
+
+@include('partials.header')
 
     <div class="container py-4">
 

@@ -13,7 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
             ->withMiddleware(function (Middleware $middleware) {
                 $middleware->web(append: [
-                    \App\Http\Middleware\PreventBackHistory::class,
+                    'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
+                   //\App\Http\Middleware\PreventBackHistory::class,
                 ]);
             })
 

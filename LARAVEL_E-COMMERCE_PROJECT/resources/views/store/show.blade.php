@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
+    @extends('partials.header')
     <div class="max-w-3xl mx-auto px-4 py-8">
         <a href="{{ route('products.index') }}" class="text-indigo-600 hover:underline mb-4 inline-block">&larr; Back</a>
         
