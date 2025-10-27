@@ -21,7 +21,7 @@
         :root {
             --primary-text: #222222; 
             --secondary-text: #666666; 
-            --accent-color: #8C5B56; /* Muted Rose/Brown from the image's buttons */
+            --accent-color: #212158ff; /* Muted Rose/Brown from the image's buttons */
             --light-bg: #F5F5F5; /* Light grey background */
             --navy-blue: #000080; 
         }
@@ -51,14 +51,13 @@
         /* Custom Tailwind classes for the new style */
         .text-accent { color: var(--accent-color); }
         .bg-accent { background-color: var(--accent-color); }
-        .hover\:bg-accent-dark:hover { background-color: #7A4E49; }
+        .hover\:bg-accent-dark:hover { background-color: #121338ff; }
         
         /* Hero Section Styles */
         .hero-section {
             position: relative;
-            height: 85vh;
-            min-height: 500px;
-            max-height: 800px;
+            height: 100vh;
+            min-height: 600px;
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             overflow: hidden;
         }
@@ -69,15 +68,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+            background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
             z-index: 1;
         }
 
         .hero-image {
             position: absolute;
             top: 0;
-            right: 0;
-            width: 60%;
+            left: 0;
+            width: 100%;
             height: 100%;
             object-fit: cover;
             object-position: center;
@@ -92,12 +91,8 @@
         }
 
         @media (max-width: 768px) {
-            .hero-image {
-                width: 100%;
-                opacity: 0.4;
-            }
             .hero-section {
-                height: 70vh;
+                height: 100vh;
             }
         }
 
@@ -138,12 +133,12 @@
         <img src="{{ asset('image/coverpage.webp') }}" alt="Luxury Jewelry" class="hero-image">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-                <div class="max-w-2xl">
+            <div class="w-full px-6 sm:px-8 lg:px-12">
+                <div class="text-left">
                     <h1 class="font-serif-elegant text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
                         Timeless <br>Elegance
                     </h1>
-                    <p class="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed">
+                    <p class="text-lg sm:text-xl text-gray-200 mb-8 leading-relaxed max-w-2xl">
                         Discover our exquisite collection of handcrafted jewelry, where luxury meets artistry. Each piece tells a unique story of elegance and sophistication.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">

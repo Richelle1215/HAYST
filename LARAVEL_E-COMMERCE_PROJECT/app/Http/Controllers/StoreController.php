@@ -20,6 +20,22 @@ class StoreController extends Controller
         return view('store.index', compact('products', 'categories'));
     }
 
+    // ADD THIS METHOD FOR CATEGORY FILTERING
+    public function filter($categoryId)
+    {
+        $category = Category::findOrFail($categoryId);
+        
+        $products = Product::with('category')
+            ->where('category_id', $categoryId)
+            ->where('stock', '>', 0)
+            ->latest()
+            ->paginate(12);
+        
+        $categories = Category::all();
+        
+        return view('store.index', compact('products', 'categories', 'category'));
+    }
+
     public function show($id)
     {
         $product = Product::with('category')->findOrFail($id);

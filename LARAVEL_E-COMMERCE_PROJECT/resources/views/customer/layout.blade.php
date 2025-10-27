@@ -207,27 +207,27 @@
         <ul class="sidebar-menu">
             <li>
                 <a href="{{ route('customer.dashboard') }}">
-                    <span>🏠</span> Dashboard
+                    <span></span> Dashboard
                 </a>
             </li>
             <li>
                 <a href="{{ route('store.index') }}">
-                    <span>🛍️</span> Shop
+                    <span></span> Shop
                 </a>
             </li>
             <li>
                 <a href="{{ route('customer.cart.index') }}">
-                    <span>🛒</span> My Cart
+                    <span></span> My Cart
                 </a>
             </li>
             <li>
                 <a href="{{ route('customer.orders') }}">
-                    <span>📦</span> My Orders
+                    <span></span> My Orders
                 </a>
             </li>
             <li>
                 <a href="{{ route('customer.profile') }}">
-                    <span>👤</span> Profile
+                    <span></span> Profile
                 </a>
             </li>
         </ul>
@@ -235,7 +235,7 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="logout-btn">
-                🚪 Logout
+                 Logout
             </button>
         </form>
     </div>

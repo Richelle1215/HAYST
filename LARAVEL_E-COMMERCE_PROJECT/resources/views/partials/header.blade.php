@@ -31,23 +31,16 @@
                             All Products
                         </a>
                         {{-- Category List --}}
-@if(isset($categories) && $categories->count() > 0)
-    @foreach($categories as $category)
-        <a href="{{ route('products.filter', $category) }}" 
-           class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-900 transition">
-            {{ $category->name }}
-        </a>
-    @endforeach
-@else
-    <p class="px-4 py-2 text-sm text-gray-500">No categories available</p>
-@endif
-                        {{-- Category List --}}
-                        @foreach($categories as $category)
-                            <a href="{{ route('products.filter', $category) }}" 
-                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-900 transition">
-                                {{ $category->name }}
-                            </a>
-                        @endforeach
+                        @if(isset($categories) && $categories->count() > 0)
+                            @foreach($categories as $category)
+                                <a href="{{ route('products.filter', $category) }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-900 transition">
+                                    {{ $category->name }}
+                                </a>
+                            @endforeach
+                        @else
+                            <p class="px-4 py-2 text-sm text-gray-500">No categories available</p>
+                        @endif
                     </div>
                 </div>
             </div> {{-- End of Dropdown --}}
@@ -63,23 +56,39 @@
                     @auth
                         @php
                             $role = Auth::user()->role ?? 'customer';
+                            $userName = Auth::user()->name ?? 'User';
                         @endphp
 
                         @if ($role === 'admin')
-                            <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-blue-600 transition">Admin Dashboard</a>
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-blue-600 transition">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                {{ $userName }}
+                            </a>
                         @elseif ($role === 'seller')
-                            <a href="{{ route('seller.dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-blue-600 transition">Seller Dashboard</a>
+                            <a href="{{ route('seller.dashboard') }}" class="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-blue-600 transition">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                {{ $userName }}
+                            </a>
                         @else
-                            <a href="{{ route('customer.dashboard') }}" class="text-sm font-semibold text-gray-700 hover:text-blue-600 transition">Customer Dashboard</a>
+                            <a href="{{ route('customer.dashboard') }}" class="flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-blue-600 transition">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                {{ $userName }}
+                            </a>
                         @endif
 
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                       {{-- LOGOUT FORM 
                             @csrf
                             <button type="submit"
                                 class="text-sm font-semibold text-white px-3 py-1 rounded transition bg-red-600 hover:bg-red-700">
                                 LOGOUT
                             </button>
-                        </form>
+                        </form> --}}
                     @else
                         {{-- Login link --}}
                         <a href="{{ route('login') }}"

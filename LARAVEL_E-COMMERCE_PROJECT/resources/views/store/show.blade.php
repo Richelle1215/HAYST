@@ -6,8 +6,35 @@
     <title>{{ $product->name }} - Detail</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --accent-color: #212158ff;
+            --light-bg: #f5f5f5;
+            --primary-text: #222222;
+            --secondary-text: #666666;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--primary-text);
+        }
+
+        .font-serif-elegant {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .text-accent { color: var(--accent-color); }
+        .bg-accent { background-color: var(--accent-color); }
+        .hover\:bg-accent-dark:hover { background-color: #121338ff; }
+        .border-accent { border-color: var(--accent-color); }
+        .ring-accent { --tw-ring-color: var(--accent-color); }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="antialiased">
 
     <!-- Success Message Toast -->
     <div id="successToast" class="hidden fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 transform transition-all duration-300">
@@ -23,18 +50,18 @@
     </div>
 
     <div class="container mx-auto px-4 py-8">
-        <a href="{{ url()->previous() }}" class="text-indigo-600 hover:underline mb-4 inline-block font-semibold">&larr; Back to Products</a>
+        <a href="{{ url()->previous() }}" class="text-accent hover:underline mb-4 inline-block font-semibold">&larr; Back to Products</a>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-2xl rounded-2xl p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-2xl p-8 border border-gray-100">
             
             <!-- Product Image -->
             <div>
                 @if($product->image)
                     <img src="{{ asset('storage/' . $product->image) }}" 
-                         class="w-full h-[500px] object-cover rounded-xl shadow-lg" 
+                         class="w-full h-[500px] object-cover rounded-lg shadow-md" 
                          alt="{{ $product->name }}">
                 @else
-                    <div class="w-full h-[500px] bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-500 text-xl rounded-xl shadow-lg">
+                    <div class="w-full h-[500px] bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-500 text-xl rounded-lg shadow-md">
                         <div class="text-center">
                             <svg class="w-24 h-24 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -48,13 +75,13 @@
             <!-- Product Details -->
             <div class="flex flex-col justify-between">
                 <div>
-                    <h1 class="text-4xl font-extrabold text-gray-900 mb-3">{{ $product->name }}</h1>
-                    <p class="text-3xl text-indigo-600 font-bold mb-4">₱{{ number_format($product->price, 2) }}</p>
+                    <h1 class="font-serif-elegant text-4xl font-bold text-gray-900 mb-3">{{ $product->name }}</h1>
+                    <p class="text-3xl text-accent font-bold mb-4">₱{{ number_format($product->price, 2) }}</p>
                     
                     <div class="space-y-2 text-sm text-gray-600 mb-6">
                         <p class="flex items-center gap-2">
                             <span class="font-semibold text-gray-900">Category:</span> 
-                            <a href="#" class="text-indigo-600 hover:underline">{{ $product->category->name ?? 'N/A' }}</a>
+                            <a href="#" class="text-accent hover:underline">{{ $product->category->name ?? 'N/A' }}</a>
                         </p>
                         <p class="flex items-center gap-2">
                             <span class="font-semibold text-gray-900">Shop:</span> 
@@ -70,19 +97,19 @@
 
                     <hr class="my-6 border-gray-200">
                     
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Product Description</h2>
+                    <h2 class="font-serif-elegant text-xl font-semibold text-gray-800 mb-3">Product Description</h2>
                     <p class="text-gray-700 leading-relaxed whitespace-pre-wrap mb-6">{{ $product->description ?: 'No description available.' }}</p>
                 </div>
 
                 <!-- Add to Cart Section -->
-                <div class="bg-gray-50 rounded-xl p-6 border-2 border-gray-200">
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
                     @auth
                         @if($product->stock > 0)
                             <div class="mb-4">
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Quantity</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
                                 <div class="flex items-center gap-3">
                                     <button onclick="decreaseQuantity()" 
-                                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-4 py-2 rounded-lg transition">
+                                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition">
                                         −
                                     </button>
                                     <input type="number" 
@@ -90,9 +117,9 @@
                                            value="1" 
                                            min="1" 
                                            max="{{ $product->stock }}" 
-                                           class="w-20 text-center px-4 py-2 border-2 border-gray-300 rounded-lg font-bold text-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                           class="w-20 text-center px-4 py-2 border border-gray-300 rounded-lg font-semibold text-lg focus:ring-2 focus:ring-accent focus:border-accent outline-none">
                                     <button onclick="increaseQuantity()" 
-                                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-4 py-2 rounded-lg transition">
+                                            class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition">
                                         +
                                     </button>
                                     <span class="text-sm text-gray-500 ml-2">Max: {{ $product->stock }}</span>
@@ -101,28 +128,28 @@
                             
                             <button onclick="addToCart()" 
                                     id="addToCartBtn"
-                                    class="w-full px-6 py-4 bg-indigo-600 text-white text-lg font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    class="w-full px-6 py-3 bg-accent text-white text-sm font-semibold rounded-lg shadow-md hover:bg-accent-dark transition-all duration-300 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                                 Add to Cart
                             </button>
                             
                             <a href="{{ route('customer.cart.index') }}" 
-                               class="block text-center mt-3 text-indigo-600 hover:text-indigo-800 font-semibold underline">
+                               class="block text-center mt-3 text-accent hover:text-gray-900 font-semibold underline text-sm">
                                 View My Cart
                             </a>
                         @else
                             <button disabled 
-                                    class="w-full px-6 py-4 bg-gray-400 text-white text-lg font-bold rounded-xl cursor-not-allowed">
+                                    class="w-full px-6 py-3 bg-gray-400 text-white text-sm font-semibold rounded-lg cursor-not-allowed">
                                 Out of Stock
                             </button>
                         @endif
                     @else
                         <div class="text-center">
-                            <p class="text-gray-600 mb-4">Please login to add items to cart</p>
+                            <p class="text-gray-600 mb-4 text-sm">Please login to add items to cart</p>
                             <a href="{{ route('login') }}" 
-                               class="inline-block px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition">
+                               class="inline-block px-6 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-dark transition text-sm">
                                 Login Now
                             </a>
                         </div>
@@ -180,7 +207,7 @@
             
             // Disable button during request
             button.disabled = true;
-            button.innerHTML = '<svg class="animate-spin h-6 w-6 mr-3 inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Adding...';
+            button.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Adding...';
             
             fetch('{{ route("customer.cart.add") }}', {
                 method: 'POST',
@@ -211,7 +238,7 @@
             .finally(() => {
                 // Re-enable button
                 button.disabled = false;
-                button.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Add to Cart';
+                button.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Add to Cart';
             });
         }
 

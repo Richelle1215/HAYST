@@ -1,131 +1,219 @@
 @extends('seller.layout')
 
 @section('content')
-<div class="p-6 mx-auto mt-8 w-full max-w-screen-2xl">
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LUMIÈRE | Categories</title>
 
-    <header class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4 md:mb-0">🗂 Categories</h1>
-        <a href="{{ route('seller.categories.create') }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md">
-            ➕ Add Category
-        </a>
-    </header>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --accent-color: #212158ff;
+            --light-bg: #f5f5f5;
+            --primary-text: #222222;
+            --secondary-text: #666666;
+        }
 
-    <div class="overflow-x-auto">
-    <table class="min-w-full w-full border border-gray-300 rounded-lg shadow">
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="border border-gray-300 px-6 py-3 text-center text-sm font-semibold text-gray-700">Category Name</th>
-                <th class="border border-gray-300 px-6 py-3 text-center text-sm font-semibold text-gray-700">Description</th>
-                <th class="border border-gray-300 px-6 py-3 text-center text-sm font-semibold text-gray-700">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($categories as $category)
-            <tr class="hover:bg-gray-50">
-                <td class="border border-gray-300 px-6 py-3 text-center">{{ $category->name }}</td>
-                <td class="border border-gray-300 px-6 py-3 text-center">{{ $category->description }}</td>
-                <td class="border border-gray-300 px-6 py-3 text-center">
-                    <a href="{{ route('seller.categories.edit', $category) }}" class="text-blue-600 hover:underline mr-2">Edit</a>
-                    <form action="{{ route('seller.categories.destroy', $category) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--primary-text);
+        }
 
+        .font-serif-elegant {
+            font-family: 'Playfair Display', serif;
+        }
 
+        .text-accent { color: var(--accent-color); }
+        .bg-accent { background-color: var(--accent-color); }
+        .hover\:bg-accent-dark:hover { background-color: #121338ff; }
+    </style>
+</head>
 
-</div>
+<body class="antialiased">
 
-{{-- DELETE CONFIRMATION MODAL --}}
-<div id="deleteModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-96 text-center animate-fade-in">
-        <h2 class="text-lg font-semibold text-gray-800 mb-3">Delete Category?</h2>
-        <p class="text-gray-600 text-sm mb-5">
-            Are you sure you want to delete this category? This action cannot be undone.
-        </p>
-        <div class="flex justify-center gap-3">
-            <button id="cancelDelete"
-                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-md">
-                Cancel
+    <div class="max-w-6xl mx-auto px-6 py-10">
+
+        {{-- HEADER --}}
+        <div class="flex justify-between items-center mb-10 border-b border-gray-200 pb-4">
+            <div>
+                <h1 class="font-serif-elegant text-4xl font-bold text-gray-900">Categories</h1>
+                <p class="text-gray-500 text-sm mt-1">Organize and manage your product categories</p>
+            </div>
+            <a href="{{ route('seller.categories.create') }}"
+               class="bg-accent hover:bg-accent-dark text-white px-6 py-3 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                + Add Category
+            </a>
+        </div>
+
+        {{-- SUCCESS MESSAGE --}}
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- SEARCH BAR --}}
+        <div class="mb-6">
+            <div class="relative">
+                <input type="text" 
+                       id="searchInput" 
+                       placeholder="Search categories by name or description..." 
+                       class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent outline-none shadow-sm">
+                <svg class="w-5 h-5 absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+        </div>
+
+        {{-- CATEGORY TABLE --}}
+        @if($categories->isEmpty())
+            <div class="bg-white shadow-xl rounded-xl p-12 text-center border border-gray-100">
+                <h2 class="font-serif-elegant text-2xl text-gray-700 mb-2">No Categories Yet</h2>
+                <p class="text-gray-500">Start by adding your first category to organize your products.</p>
+            </div>
+        @else
+            <div class="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-100">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Category Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
+                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($categories as $category)
+                            <tr class="hover:bg-gray-50 transition-all duration-200 category-row"
+                                data-name="{{ strtolower($category->name) }}"
+                                data-description="{{ strtolower($category->description ?? '') }}">
+                                <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-800">
+                                    {{ $category->name }}
+                                </td>
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $category->description ?? '—' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                    <a href="{{ route('seller.categories.edit', $category) }}" 
+                                       class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
+                                    <button onclick="openDeleteModal({{ $category->id }})"
+                                            class="text-red-600 hover:text-red-900">Delete</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- NO RESULTS MESSAGE --}}
+            <div id="noResultsMessage" class="hidden bg-white shadow-xl rounded-xl p-12 text-center border border-gray-100 mt-6">
+                <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <h3 class="font-serif-elegant text-xl text-gray-700 mb-2">No Categories Found</h3>
+                <p class="text-gray-500">Try adjusting your search terms</p>
+            </div>
+        @endif
+    </div>
+
+    {{-- DELETE CONFIRMATION MODAL --}}
+    <div id="deleteModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-[420px] text-center relative">
+            <button onclick="closeDeleteModal()" 
+                    class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md">
+                &times;
             </button>
-            <button id="confirmDelete"
-                    class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md">
-                Delete
-            </button>
+            <h2 class="font-serif-elegant text-2xl text-gray-800 mb-3">Delete Category?</h2>
+            <p class="text-gray-600 text-sm mb-5">
+                Are you sure you want to delete this category? This action cannot be undone.
+            </p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeDeleteModal()"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-md">
+                    Cancel
+                </button>
+                <button id="confirmDelete"
+                        class="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md">
+                    Delete
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-{{-- SUCCESS TOAST --}}
-<div id="successToast"
-     class="hidden fixed top-5 right-5 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg text-sm z-50">
-    ✅ Category deleted successfully.
-</div>
+    {{-- SUCCESS TOAST --}}
+    <div id="successToast"
+         class="hidden fixed top-5 right-5 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg text-sm z-50">
+        ✅ Category deleted successfully.
+    </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const deleteForms = document.querySelectorAll('form[action*="categories"]');
-    const modal = document.getElementById('deleteModal');
-    const confirmBtn = document.getElementById('confirmDelete');
-    const cancelBtn = document.getElementById('cancelDelete');
-    const toast = document.getElementById('successToast');
+    <script>
+        let deleteId = null;
 
-    let selectedForm = null;
+        // SEARCH FUNCTIONALITY
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const categoryRows = document.querySelectorAll('.category-row');
+            let visibleCount = 0;
 
-    deleteForms.forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            selectedForm = form;
-            modal.classList.remove('hidden');
-        });
-    });
+            categoryRows.forEach(row => {
+                const name = row.dataset.name;
+                const description = row.dataset.description;
+                
+                if (name.includes(searchTerm) || description.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
 
-    cancelBtn.addEventListener('click', () => {
-        modal.classList.add('hidden');
-        selectedForm = null;
-    });
-
-    confirmBtn.addEventListener('click', () => {
-        if (!selectedForm) return;
-        const action = selectedForm.getAttribute('action');
-        const token = selectedForm.querySelector('input[name="_token"]').value;
-
-        fetch(action, {
-            method: 'POST', // _method DELETE
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token,
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({ _method: 'DELETE' })
-        }).then(response => {
-            if (response.ok) {
-                modal.classList.add('hidden');
-                selectedForm.closest('tr').remove();
-                toast.classList.remove('hidden');
-                setTimeout(() => toast.classList.add('hidden'), 3000);
+            // Show/hide no results message
+            const noResultsMsg = document.getElementById('noResultsMessage');
+            if (visibleCount === 0 && searchTerm !== '') {
+                noResultsMsg.classList.remove('hidden');
+            } else {
+                noResultsMsg.classList.add('hidden');
             }
         });
-    });
-});
-</script>
 
-<style>
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-.animate-fade-in {
-    animation: fadeIn 0.25s ease-out;
-}
-</style>
+        function openDeleteModal(id) {
+            deleteId = id;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
 
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            deleteId = null;
+        }
+
+        document.getElementById('confirmDelete').addEventListener('click', () => {
+            if (!deleteId) return;
+
+            fetch(`/seller/categories/${deleteId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    closeDeleteModal();
+                    location.reload();
+                } else {
+                    alert('Error deleting category.');
+                }
+            })
+            .catch(err => console.error(err));
+        });
+    </script>
+
+</body>
+</html>
 @endsection
