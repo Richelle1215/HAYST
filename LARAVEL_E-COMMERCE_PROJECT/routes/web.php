@@ -64,6 +64,7 @@ Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(functi
     // Orders
     Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders');
     Route::get('/orders/{id}', [CustomerOrderController::class, 'show'])->name('orders.show');
+Route::post('/orders/{order}/cancel', [CustomerOrderController::class, 'cancel'])->name('orders.cancel');
     // Cart
  Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');

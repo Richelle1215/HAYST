@@ -37,5 +37,11 @@ public function orderItems()
 {
     return $this->hasMany(OrderItem::class);
 }
+// In Order.php model
+public function customer()
+{
+    return $this->belongsTo(User::class, 'customer_id');
+}
+// In app/Models/Order.php
 
 }

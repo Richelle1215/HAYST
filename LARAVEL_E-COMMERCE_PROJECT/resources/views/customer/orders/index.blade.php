@@ -101,12 +101,12 @@
             <div class="flex overflow-x-auto no-scrollbar border-b border-gray-200">
                 @php
                     $tabs = [
-                        'all' => ['label' => 'All Orders', 'icon' => ''],
-                        'pending' => ['label' => 'To Pay', 'icon' => ''],
-                        'processing' => ['label' => 'Processing', 'icon' => ''],
-                        'shipped' => ['label' => 'Shipped', 'icon' => ''],
-                        'completed' => ['label' => 'Completed', 'icon' => ''],
-                        'cancelled' => ['label' => 'Cancelled', 'icon' => ''],
+                        'all' => ['label' => 'All Orders', 'icon' => '📦'],
+                        'pending' => ['label' => 'To Pay', 'icon' => '⏳'],
+                        'processing' => ['label' => 'Processing', 'icon' => '⚙️'],
+                        'shipped' => ['label' => 'Shipped', 'icon' => '🚚'],
+                        'completed' => ['label' => 'Completed', 'icon' => '✅'],
+                        'cancelled' => ['label' => 'Cancelled', 'icon' => '❌'],
                     ];
                 @endphp
 
@@ -129,7 +129,7 @@
                               d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                     <h3 class="font-serif-elegant text-2xl text-gray-800 mb-3">No Orders Yet</h3>
-                    <p class="text-gray-500 text-sm mb-6">You haven’t placed any orders yet.</p>
+                    <p class="text-gray-500 text-sm mb-6">You haven't placed any orders yet.</p>
                     <a href="{{ route('store.index') }}"
                        class="btn-primary px-6 py-3 rounded-lg font-semibold text-sm">Shop Now</a>
                 </div>
@@ -175,8 +175,16 @@
                         @endforeach
                     </div>
 
-                    {{-- Footer (no View Details) --}}
-                    <div class="mt-6 flex justify-end items-center border-t border-gray-100 pt-4">
+                    {{-- Footer with Cancel Button --}}
+                    <div class="mt-6 flex justify-between items-center border-t border-gray-100 pt-4">
+                        <div>
+                            @if($order->status === 'pending' || $order->status === 'processing')
+                                <button onclick="cancelOrder({{ $order->id }})" 
+                                        class="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition">
+                                    Cancel Order
+                                </button>
+                            @endif
+                        </div>
                         <p class="text-gray-700 font-semibold">
                             Total: <span class="text-accent">₱{{ number_format($order->total_amount, 2) }}</span>
                         </p>
@@ -187,7 +195,64 @@
         </div>
     </div>
 
+    {{-- Cancel Confirmation Modal --}}
+    <div id="cancelModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <h3 class="font-serif-elegant text-2xl font-bold text-gray-900 mb-3">Cancel Order?</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to cancel this order? This action cannot be undone.</p>
+            
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeCancelModal()" 
+                        class="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">
+                    No, Keep Order
+                </button>
+                <button id="confirmCancelBtn" 
+                        class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">
+                    Yes, Cancel Order
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let orderToCancel = null;
+
+        function cancelOrder(orderId) {
+            orderToCancel = orderId;
+            document.getElementById('cancelModal').classList.remove('hidden');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.add('hidden');
+            orderToCancel = null;
+        }
+
+        document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+            if (!orderToCancel) return;
+
+            fetch(`/customer/orders/${orderToCancel}/cancel`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeCancelModal();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to cancel order');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while canceling the order');
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.tab-btn');
             const cards = document.querySelectorAll('.order-card');
