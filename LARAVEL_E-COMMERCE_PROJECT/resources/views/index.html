@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HAYST - E-Commerce Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-red-600">HAYST</div>
+            <div class="space-x-6">
+                <a href="#" class="text-gray-700 hover:text-red-600">Home</a>
+                <a href="#products" class="text-gray-700 hover:text-red-600">Products</a>
+                <a href="#sellers" class="text-gray-700 hover:text-red-600">Sellers</a>
+                <button class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Sign In</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="mt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">Welcome to HAYST</h1>
+        <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            A modern e-commerce platform for buyers and sellers. Discover amazing products, become a seller, and grow your business.
+        </p>
+        <div class="space-x-4">
+            <button class="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 text-lg font-semibold">Browse Products</button>
+            <button class="px-8 py-3 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-50 text-lg font-semibold">Become a Seller</button>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="bg-gray-50 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Why Choose HAYST?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-sm">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Fast & Reliable</h3>
+                    <p class="text-gray-600">Quick checkout process and secure payment processing for a smooth shopping experience.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-sm">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Great Prices</h3>
+                    <p class="text-gray-600">Competitive pricing with regular discounts and exclusive deals for our customers.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-sm">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Secure & Safe</h3>
+                    <p class="text-gray-600">Your data is protected with industry-leading security and encrypted transactions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Preview -->
+    <section id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h2 class="text-3xl font-bold mb-12">Featured Products</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition">
+                <div class="bg-gradient-to-r from-red-400 to-red-600 h-48 flex items-center justify-center">
+                    <span class="text-white text-4xl">📱</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Electronics</h3>
+                    <p class="text-gray-600 text-sm mb-4">Latest gadgets and devices</p>
+                    <p class="text-red-600 font-bold">$99 - $999</p>
+                </div>
+            </div>
+            <div class="bg-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition">
+                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-48 flex items-center justify-center">
+                    <span class="text-white text-4xl">👗</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Fashion</h3>
+                    <p class="text-gray-600 text-sm mb-4">Trendy clothing & accessories</p>
+                    <p class="text-red-600 font-bold">$29 - $199</p>
+                </div>
+            </div>
+            <div class="bg-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition">
+                <div class="bg-gradient-to-r from-green-400 to-green-600 h-48 flex items-center justify-center">
+                    <span class="text-white text-4xl">🏠</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Home & Garden</h3>
+                    <p class="text-gray-600 text-sm mb-4">Everything for your home</p>
+                    <p class="text-red-600 font-bold">$19 - $499</p>
+                </div>
+            </div>
+            <div class="bg-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition">
+                <div class="bg-gradient-to-r from-purple-400 to-purple-600 h-48 flex items-center justify-center">
+                    <span class="text-white text-4xl">⚽</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Sports</h3>
+                    <p class="text-gray-600 text-sm mb-4">Sports & outdoor equipment</p>
+                    <p class="text-red-600 font-bold">$39 - $599</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sellers Section -->
+    <section id="sellers" class="bg-gray-900 text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-6">Become a Seller</h2>
+            <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+                Join thousands of sellers on HAYST. Reach millions of customers, grow your business, and achieve your goals.
+            </p>
+            <button class="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 text-lg font-semibold">Start Selling Today</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 border-t py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="font-bold text-lg mb-4">HAYST</h3>
+                    <p class="text-gray-600 text-sm">Your trusted e-commerce platform.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Shop</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-red-600">All Products</a></li>
+                        <li><a href="#" class="hover:text-red-600">New Arrivals</a></li>
+                        <li><a href="#" class="hover:text-red-600">Best Sellers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-red-600">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-red-600">FAQ</a></li>
+                        <li><a href="#" class="hover:text-red-600">Returns</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li><a href="#" class="hover:text-red-600">Privacy</a></li>
+                        <li><a href="#" class="hover:text-red-600">Terms</a></li>
+                        <li><a href="#" class="hover:text-red-600">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t pt-8 text-center text-gray-600 text-sm">
+                <p>&copy; 2026 HAYST. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

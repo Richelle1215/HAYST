@@ -12,6 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Create dist directory
+        run: mkdir -p ./LARAVEL_E-COMMERCE_PROJECT/dist
+      
+      - name: Copy static HTML
+        run: cp ./LARAVEL_E-COMMERCE_PROJECT/resources/views/index.html ./LARAVEL_E-COMMERCE_PROJECT/dist/index.html
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -30,4 +36,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./LARAVEL_E-COMMERCE_PROJECT/dist
-          cname: hayst-ui.pages.github.io
